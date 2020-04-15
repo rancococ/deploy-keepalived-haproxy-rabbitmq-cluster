@@ -1,0 +1,121 @@
+# config for haproxy
+
+#---------------------------------------------------------------------
+# Global settings
+#---------------------------------------------------------------------
+global
+    daemon
+    log                        127.0.0.1 local0
+    nbproc                     4
+    ulimit-n                   1024000
+    max-spread-checks          1000ms
+    maxconn                    500000
+    maxconnrate                500000
+    maxsessrate                500000
+    maxsslconn                 500000
+    maxsslrate                 500000
+    #maxsock=10(default)+global.maxconn*2+global.maxpipes*2+bind+check
+    #maxconn<(ulimit-n/2)
+    tune.ssl.default-dh-param  2048
+
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    mode    http
+    log     global
+    maxconn 500000
+    option  httplog
+    option  dontlognull
+    option  nolinger
+    option  redispatch
+    option  clitcpka
+    option  srvtcpka
+    retries 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         5s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    balance roundrobin
+
+#---------------------------------------------------------------------
+# listen monitor
+#---------------------------------------------------------------------
+listen monitor
+    bind             *:{{with .monitor.port}}{{.}}{{else}}9000{{end}}
+    bind-process     1
+    mode             http
+    maxconn          100
+    stats            refresh 10s
+    stats            enable
+    stats            uri /admin?stats
+    stats            realm haproxy\Statistics
+    stats            auth admin:admin
+    stats            hide-version
+    stats            admin if TRUE
+    capture request  header Host           len 40
+    capture request  header Content-Length len 10
+    capture request  header Referer        len 200
+    capture response header Server         len 40
+    capture response header Content-Length len 10
+    capture response header Cache-Control  len 8
+
+{{- range .tcpproxys}}
+
+#---------------------------------------------------------------------
+# listen listen_{{.name}}
+#---------------------------------------------------------------------
+listen listen_{{.name}}_{{.port}}
+    bind            *:{{.port}}
+    mode            tcp
+    balance         roundrobin
+    option          tcplog
+    option          dontlognull
+    option          nolinger
+    option          redispatch
+    {{- range .servers}}
+    server          {{.name}} {{.addr}} check inter 3s
+    {{- end}}
+
+{{- end}}
+
+{{- range .httpproxys}}
+
+#---------------------------------------------------------------------
+# frontend frontend_{{.name}}_{{.port}}
+#---------------------------------------------------------------------
+frontend frontend_{{.name}}_{{.port}}
+    bind            *:{{.port}}{{if .ssl}} ssl crt /usr/local/etc/haproxy/server.pem{{end}}
+    bind-process    4
+    mode            http
+    option          httplog
+    option          dontlognull
+    option          nolinger
+    option          originalto
+    option          forwardfor except 127.0.0.0/8
+    monitor-uri     /monitoruri
+    reqadd          X-Forwarded-Proto:\ https
+    timeout client  30s
+    stats uri       /admin/stats
+    default_backend backend_{{.name}}_{{.port}}
+
+#---------------------------------------------------------------------
+# backend backend_{{.name}}_{{.port}}
+#---------------------------------------------------------------------
+backend backend_{{.name}}_{{.port}}
+    mode            http
+    balance         source
+    option          redispatch
+    retries         3
+    timeout connect 3s
+    timeout server  300s
+    #option  httpchk HEAD /info?healthcheck=true
+    {{- range .servers}}
+    server          {{.name}} {{.addr}} check inter 3s
+    {{- end}}
+
+{{- end}}

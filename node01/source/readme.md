@@ -1,0 +1,2 @@
+
+keepalived-haproxy-rabbitmq-cluster

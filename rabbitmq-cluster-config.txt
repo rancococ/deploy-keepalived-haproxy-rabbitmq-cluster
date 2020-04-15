@@ -1,0 +1,19 @@
+1.在node01上执行:
+docker exec -it khrc-rabbitmq rabbitmqctl stop_app
+docker exec -it khrc-rabbitmq rabbitmqctl reset
+docker exec -it khrc-rabbitmq rabbitmqctl start_app
+docker exec -it khrc-rabbitmq rabbitmqctl set_cluster_name "rabbit@khrmq"
+docker exec -it khrc-rabbitmq rabbitmqctl set_policy -p / ha-all "^" '{"ha-mode":"all","ha-sync-mode":"automatic","ha-promote-on-shutdown":"always","ha-promote-on-failure":"always"}'
+
+2.在node02上执行:
+docker exec -it khrc-rabbitmq rabbitmqctl stop_app
+docker exec -it khrc-rabbitmq rabbitmqctl reset
+docker exec -it khrc-rabbitmq rabbitmqctl join_cluster rabbit@khrc-rabbitmq01
+docker exec -it khrc-rabbitmq rabbitmqctl start_app
+
+3.ha镜像模式可选值：
+ha-mode:all,exactly,nodes
+ha-params:Absent if ha-mode is all, a number if ha-mode is exactly, or a list of strings if ha-mode is nodes.
+ha-sync-mode:manual,automatic
+ha-promote-on-shutdown:when-synced,always
+ha-promote-on-failure:when-synced,always
