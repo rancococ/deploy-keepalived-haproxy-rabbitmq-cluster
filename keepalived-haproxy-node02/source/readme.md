@@ -1,0 +1,2 @@
+
+keepalived-haproxy-for-rabbitmq

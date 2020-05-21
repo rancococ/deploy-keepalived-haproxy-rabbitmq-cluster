@@ -1,0 +1,72 @@
+{
+	\"monitor\": {
+		\"port\": \"${HAPROXY_MONITOR_PORT}\"
+	},
+	\"tcpproxys\": [{
+		\"name\": \"${HAPROXY_TCP_SERVICE01_NAME}\",
+		\"port\": \"${HAPROXY_TCP_SERVICE01_PORT}\",
+		\"servers\": [{
+			\"name\": \"${HAPROXY_TCP_SERVICE01_NODE01_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE01_NODE01_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_TCP_SERVICE01_NODE02_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE01_NODE02_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_TCP_SERVICE01_NODE03_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE01_NODE03_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_TCP_SERVICE01_NODE04_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE01_NODE04_ADDR}\"
+		}]
+	}, {
+		\"name\": \"${HAPROXY_TCP_SERVICE02_NAME}\",
+		\"port\": \"${HAPROXY_TCP_SERVICE02_PORT}\",
+		\"servers\": [{
+			\"name\": \"${HAPROXY_TCP_SERVICE02_NODE01_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE02_NODE01_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_TCP_SERVICE02_NODE02_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE02_NODE02_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_TCP_SERVICE02_NODE03_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE02_NODE03_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_TCP_SERVICE02_NODE04_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE02_NODE04_ADDR}\"
+		}]
+	}, {
+		\"name\": \"${HAPROXY_TCP_SERVICE03_NAME}\",
+		\"port\": \"${HAPROXY_TCP_SERVICE03_PORT}\",
+		\"servers\": [{
+			\"name\": \"${HAPROXY_TCP_SERVICE03_NODE01_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE03_NODE01_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_TCP_SERVICE03_NODE02_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE03_NODE02_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_TCP_SERVICE03_NODE03_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE03_NODE03_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_TCP_SERVICE03_NODE04_NAME}\",
+			\"addr\": \"${HAPROXY_TCP_SERVICE03_NODE04_ADDR}\"
+		}]
+	}],
+	\"httpproxys\": [{
+		\"name\": \"${HAPROXY_HTTP_SERVICE01_NAME}\",
+		\"port\": \"${HAPROXY_HTTP_SERVICE01_PORT}\",
+		\"ssl\": \"${HAPROXY_HTTP_SERVICE01_SSL}\",
+		\"servers\": [{
+			\"name\": \"${HAPROXY_HTTP_SERVICE01_NODE01_NAME}\",
+			\"addr\": \"${HAPROXY_HTTP_SERVICE01_NODE01_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_HTTP_SERVICE01_NODE02_NAME}\",
+			\"addr\": \"${HAPROXY_HTTP_SERVICE01_NODE02_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_HTTP_SERVICE01_NODE03_NAME}\",
+			\"addr\": \"${HAPROXY_HTTP_SERVICE01_NODE03_ADDR}\"
+		}, {
+			\"name\": \"${HAPROXY_HTTP_SERVICE01_NODE04_NAME}\",
+			\"addr\": \"${HAPROXY_HTTP_SERVICE01_NODE04_ADDR}\"
+		}]
+	}]
+}

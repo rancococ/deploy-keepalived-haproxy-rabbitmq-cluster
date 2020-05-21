@@ -1,0 +1,49 @@
+##########################################################################
+# 部署配置文件(base)
+# 本配置文件(xx.yml)中的变量(${xxx})是从同级目录下的.env文件中读取的
+##########################################################################
+# compose支持的版本2
+version: "2"
+services:
+  # keepalived
+  keepalived:
+    image: "${IMAGE_KEEPALIVED}"
+    container_name: "${CONTAINER_KEEPALIVED}"
+    hostname: "${CURRENT_HOSTNAME_KEEPALIVED}"
+    restart: "always"
+    env_file:
+      - ./keepalived.env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      #- ./volume/keepalived/conf/keepalived.conf:/etc/keepalived/keepalived.conf:ro
+    network_mode: "host"
+    extra_hosts:
+      - "${CLUSTER_HOSTNAME_KEEPALIVED01}:${CLUSTER_ADDRESS_KEEPALIVED01}"
+      - "${CLUSTER_HOSTNAME_KEEPALIVED02}:${CLUSTER_ADDRESS_KEEPALIVED02}"
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+      - NET_BROADCAST
+  # haproxy
+  haproxy:
+    image: "${IMAGE_HAPROXY}"
+    container_name: "${CONTAINER_HAPROXY}"
+    hostname: "${CURRENT_HOSTNAME_HAPROXY}"
+    restart: "always"
+    env_file:
+      - ./haproxy.env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./volume/haproxy/conf/haproxy.tmpl:/usr/local/etc/haproxy/haproxy.tmpl:ro
+      - ./volume/haproxy/conf/haproxy.temp:/usr/local/etc/haproxy/haproxy.temp:ro
+      #- ./volume/haproxy/conf/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./volume/haproxy/conf/server.pem:/usr/local/etc/haproxy/server.pem:ro
+    command: haproxy -f /usr/local/etc/haproxy/haproxy.cfg
+    network_mode: "host"
+    extra_hosts:
+      - "${CLUSTER_HOSTNAME_HAPROXY01}:${CLUSTER_ADDRESS_HAPROXY01}"
+      - "${CLUSTER_HOSTNAME_HAPROXY02}:${CLUSTER_ADDRESS_HAPROXY02}"
+    # cap_add:
+    #   - NET_ADMIN
+    #   - SYS_ADMIN
+
