@@ -16,6 +16,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./volume/rabbitmq/data:/var/lib/rabbitmq:rw
+      - ./volume/rabbitmq/logs:/var/log/rabbitmq:rw
     network_mode: "host"
     extra_hosts:
       - "${CLUSTER_HOSTNAME_RABBITMQ01}:${CLUSTER_ADDRESS_RABBITMQ01}"

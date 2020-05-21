@@ -1,2 +1,5 @@
 
 keepalived-haproxy-rabbitmq-cluster
+
+rabbitmq_delayed_message_exchange插件不支持集群的内存节点
+rabbitmq-plugins disable --offline rabbitmq_delayed_message_exchange
