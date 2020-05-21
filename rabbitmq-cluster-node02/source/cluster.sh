@@ -148,7 +148,7 @@ fun_init_cluster() {
     info "rabbitmqctl reset"
     docker exec -it "${CONTAINER_RABBITMQ}" rabbitmqctl reset
     info "rabbitmqctl join_cluster"
-    docker exec -it "${CONTAINER_RABBITMQ}" rabbitmqctl join_cluster "rabbit@${CLUSTER_HOSTNAME_RABBITMQ01}"
+    docker exec -it "${CONTAINER_RABBITMQ}" rabbitmqctl join_cluster --ram "rabbit@${CLUSTER_HOSTNAME_RABBITMQ01}"
     info "rabbitmqctl start_app"
     docker exec -it "${CONTAINER_RABBITMQ}" rabbitmqctl start_app
     success "successfully initialized cluster"
