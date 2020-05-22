@@ -58,7 +58,7 @@ cd "${base_dir}"
 product_name="rabbitmq-cluster-node01"
 product_version="1.0.0.0"
 images=(
-registry.cdjdgm.com/library/rabbitmq:3.7.24-extend
+registry.cdjdgm.com/library/rabbitmq:3.7.26.1-extend
 )
 temp_uuid="$(cat /proc/sys/kernel/random/uuid)"
 build_home="/tmp/build_${temp_uuid}"
