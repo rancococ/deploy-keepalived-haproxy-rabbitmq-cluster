@@ -144,12 +144,18 @@ fun_bind_ip() {
     header "bind ip : "
     bind_device_temp=${arg_bind_device:-"${BIND_DEVICE}"}
     bind_address_temp=${BIND_ADDRESS}
-    info "delete ipv4.addr ${bind_address_temp} for ${bind_device_temp}"
-    nmcli connection modify "${bind_device_temp}" -ipv4.addr "${bind_address_temp}" 2>/dev/null || true
-    info "add ipv4.addr ${bind_address_temp} for ${bind_device_temp}"
-    nmcli connection modify "${bind_device_temp}" +ipv4.addr "${bind_address_temp}" 2>/dev/null || true
-    info "restart network service"
-    systemctl restart network
+    info "check if the ip address ${bind_address_temp} already exists for ${bind_device_temp}"
+    flag=$(nmcli connection show "${bind_device_temp}" | grep ipv4.addresses | grep "${bind_address_temp}" | wc -l || true)
+    if [[ ${flag} == 0 ]]; then
+        info "ip address ${bind_address_temp} does not exist for ${bind_device_temp}"
+        info "add ipv4.addr ${bind_address_temp} for ${bind_device_temp}"
+        nmcli connection modify "${bind_device_temp}" +ipv4.addr "${bind_address_temp}" 2>/dev/null || true
+        info "reload and active connection for ${bind_device_temp}"
+        nmcli connection reload
+        nmcli connection up "${bind_device_temp}"
+    else
+        info "ip address ${bind_address_temp} already exists for ${bind_device_temp}"
+    fi
     info "show ip addr for ${bind_device_temp}"
     ip addr show "${bind_device_temp}"
     success "successfully binded ip"
@@ -161,10 +167,18 @@ fun_unbind_ip() {
     header "unbind ip : "
     bind_device_temp=${arg_bind_device:-"${BIND_DEVICE}"}
     bind_address_temp=${BIND_ADDRESS}
-    info "delete ipv4.addr ${bind_address_temp} for ${bind_device_temp}"
-    nmcli connection modify "${bind_device_temp}" -ipv4.addr "${bind_address_temp}" 2>/dev/null || true
-    info "restart network service"
-    systemctl restart network
+    info "check if the ip address ${bind_address_temp} already exists for ${bind_device_temp}"
+    flag=$(nmcli connection show "${bind_device_temp}" | grep ipv4.addresses | grep "${bind_address_temp}" | wc -l || true)
+    if [[ ${flag} > 0 ]]; then
+        info "ip address ${bind_address_temp} already exists for ${bind_device_temp}"
+        info "delete ipv4.addr ${bind_address_temp} for ${bind_device_temp}"
+        nmcli connection modify "${bind_device_temp}" -ipv4.addr "${bind_address_temp}" 2>/dev/null || true
+        info "reload and active connection for ${bind_device_temp}"
+        nmcli connection reload
+        nmcli connection up "${bind_device_temp}"
+    else
+        info "ip address ${bind_address_temp} does not exist for ${bind_device_temp}"
+    fi
     info "show ip addr for ${bind_device_temp}"
     ip addr show "${bind_device_temp}"
     success "successfully unbinded ip"
